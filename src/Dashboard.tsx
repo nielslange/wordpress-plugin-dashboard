@@ -187,210 +187,243 @@ function Dashboard() {
 	};
 
 	return (
-		<div className="py-4">
-			<h1>Plugin Dashboard</h1>
-			{ loading && <p>Loading...</p> }
-			{ error && (
-				<div>{ `There is a problem fetching the post data - ${ error }` }</div>
-			) }
-			{ data && (
-				<>
-					<p className="lead">
-						The following { data.length } plugins have been
-						downloaded{ ' ' }
-						<strong>{ downloads.toLocaleString() }</strong> and
-						installed <strong>{ installs.toLocaleString() }</strong>{ ' ' }
-						times.
-					</p>
-					<form className="row g-3">
-						<div className="col-auto">Sort by</div>
-						<div className="col-auto">
-							<select
-								className="form-select"
-								aria-label="Select sort field"
-								name="sortField"
-								onChange={ handelSortField }
-							>
-								<option value="activeInstalls">
-									active installs
-								</option>
-								<option value="downloads">downloads</option>
-								<option value="numberOfRatings">
-									number of ratings
-								</option>
-								<option value="pluginName">plugin name</option>
-								<option value="rating">rating</option>
-								<option value="requiresAtLeast">
-									required WordPress version
-								</option>
-								<option value="requiresPHP">
-									required PHP version
-								</option>
-								<option value="testedUpTo">tested up to</option>
-							</select>
-						</div>
-						<div className="col-auto">
-							<select
-								className="form-select"
-								aria-label="Select sort order"
-								name="sortOrder"
-								onChange={ handelSortOrder }
-							>
-								<option value="desc">desc</option>
-								<option value="asc">asc</option>
-							</select>
-						</div>
-					</form>
+		<div className="container-fluid">
+			<div className="row">
+				<div className="col-md-3 col-12 m-0 p-0">
+					<div className="text-bg-dark p-4 vh-100 sticky-top">
+						<h3>Plugin Dashboard</h3>
 
-					<div className="my-3">
-						<div className="form-check form-check-inline">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								id="activeInstalls"
-								name="activeInstalls"
-								checked={ showActiveInstalls }
-								onChange={ toggleActiveInstalls }
-							/>
-							<label
-								className="form-check-label"
-								htmlFor="activeInstalls"
-							>
-								Active installs
-							</label>
-						</div>
-						<div className="form-check form-check-inline">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								id="downloads"
-								name="downloads"
-								checked={ showDownloads }
-								onChange={ toggleDownloads }
-							/>
-							<label
-								className="form-check-label"
-								htmlFor="downloads"
-							>
-								Downloads
-							</label>
-						</div>
-						<div className="form-check form-check-inline">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								id="numberOfRatings"
-								name="numberOfRatings"
-								checked={ showNumberOfRatings }
-								onChange={ toggleNumberOfRatings }
-							/>
-							<label
-								className="form-check-label"
-								htmlFor="numberOfRatings"
-							>
-								Number of ratings
-							</label>
-						</div>
-						<div className="form-check form-check-inline">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								id="rating"
-								name="rating"
-								checked={ showRating }
-								onChange={ toggleRating }
-							/>
-							<label
-								className="form-check-label"
-								htmlFor="rating"
-							>
-								Rating
-							</label>
-						</div>
-						<div className="form-check form-check-inline">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								id="requiresAtLeast"
-								name="requiresAtLeast"
-								checked={ showRequiresAtLeast }
-								onChange={ toggleRequiresAtLeast }
-							/>
-							<label
-								className="form-check-label"
-								htmlFor="requiresAtLeast"
-							>
-								Requires at least
-							</label>
-						</div>
-						<div className="form-check form-check-inline">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								id="requiresPHP"
-								name="requiresPHP"
-								checked={ showRequiresPHP }
-								onChange={ toggleRequiresPHP }
-							/>
-							<label
-								className="form-check-label"
-								htmlFor="requiresPHP"
-							>
-								Requires PHP
-							</label>
-						</div>
-						<div className="form-check form-check-inline">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								id="testedUpTo"
-								name="testedUpTo"
-								checked={ showTestedUpTo }
-								onChange={ toggleTestedUpTo }
-							/>
-							<label
-								className="form-check-label"
-								htmlFor="testedUpTo"
-							>
-								Tested up to
-							</label>
-						</div>
-						<div className="form-check form-check-inline">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								id="version"
-								name="version"
-								checked={ showVersion }
-								onChange={ toggleVersion }
-							/>
-							<label
-								className="form-check-label"
-								htmlFor="version"
-							>
-								Version
-							</label>
-						</div>
-					</div>
+						{ loading && <p>Loading...</p> }
+						{ error && (
+							<div>{ `There is a problem fetching the post data - ${ error }` }</div>
+						) }
+						{ data && (
+							<>
+								<p className="lead">
+									The following { data.length } plugins have
+									been downloaded{ ' ' }
+									<strong>
+										{ downloads.toLocaleString() }
+									</strong>{ ' ' }
+									and installed{ ' ' }
+									<strong>
+										{ installs.toLocaleString() }
+									</strong>{ ' ' }
+									times.
+								</p>
+								<form>
+									<p className="lead">Sort by</p>
+									<p>
+										<select
+											className="form-select"
+											aria-label="Select sort field"
+											name="sortField"
+											onChange={ handelSortField }
+										>
+											<option value="activeInstalls">
+												active installs
+											</option>
+											<option value="downloads">
+												downloads
+											</option>
+											<option value="numberOfRatings">
+												number of ratings
+											</option>
+											<option value="pluginName">
+												plugin name
+											</option>
+											<option value="rating">
+												rating
+											</option>
+											<option value="requiresAtLeast">
+												required WordPress version
+											</option>
+											<option value="requiresPHP">
+												required PHP version
+											</option>
+											<option value="testedUpTo">
+												tested up to
+											</option>
+										</select>
+									</p>
+									<p>
+										<select
+											className="form-select"
+											aria-label="Select sort order"
+											name="sortOrder"
+											onChange={ handelSortOrder }
+										>
+											<option value="desc">desc</option>
+											<option value="asc">asc</option>
+										</select>
+									</p>
+								</form>
 
-					<div className="row gy-5">
-						{ data.map( ( plugin: any ) => (
-							<Plugin
-								plugin={ plugin }
-								key={ uuidv4() }
-								showActiveInstalls={ showActiveInstalls }
-								showDownloads={ showDownloads }
-								showNumberOfRatings={ showNumberOfRatings }
-								showRating={ showRating }
-								showRequiresAtLeast={ showRequiresAtLeast }
-								showRequiresPHP={ showRequiresPHP }
-								showTestedUpTo={ showTestedUpTo }
-								showVersion={ showVersion }
-							/>
-						) ) }
+								<p className="lead">Show</p>
+								<div className="my-3">
+									<div className="form-check">
+										<input
+											className="form-check-input"
+											type="checkbox"
+											id="activeInstalls"
+											name="activeInstalls"
+											checked={ showActiveInstalls }
+											onChange={ toggleActiveInstalls }
+										/>
+										<label
+											className="form-check-label"
+											htmlFor="activeInstalls"
+										>
+											Active installs
+										</label>
+									</div>
+									<div className="form-check">
+										<input
+											className="form-check-input"
+											type="checkbox"
+											id="downloads"
+											name="downloads"
+											checked={ showDownloads }
+											onChange={ toggleDownloads }
+										/>
+										<label
+											className="form-check-label"
+											htmlFor="downloads"
+										>
+											Downloads
+										</label>
+									</div>
+									<div className="form-check">
+										<input
+											className="form-check-input"
+											type="checkbox"
+											id="numberOfRatings"
+											name="numberOfRatings"
+											checked={ showNumberOfRatings }
+											onChange={ toggleNumberOfRatings }
+										/>
+										<label
+											className="form-check-label"
+											htmlFor="numberOfRatings"
+										>
+											Number of ratings
+										</label>
+									</div>
+									<div className="form-check">
+										<input
+											className="form-check-input"
+											type="checkbox"
+											id="rating"
+											name="rating"
+											checked={ showRating }
+											onChange={ toggleRating }
+										/>
+										<label
+											className="form-check-label"
+											htmlFor="rating"
+										>
+											Rating
+										</label>
+									</div>
+									<div className="form-check">
+										<input
+											className="form-check-input"
+											type="checkbox"
+											id="requiresAtLeast"
+											name="requiresAtLeast"
+											checked={ showRequiresAtLeast }
+											onChange={ toggleRequiresAtLeast }
+										/>
+										<label
+											className="form-check-label"
+											htmlFor="requiresAtLeast"
+										>
+											Requires at least
+										</label>
+									</div>
+									<div className="form-check">
+										<input
+											className="form-check-input"
+											type="checkbox"
+											id="requiresPHP"
+											name="requiresPHP"
+											checked={ showRequiresPHP }
+											onChange={ toggleRequiresPHP }
+										/>
+										<label
+											className="form-check-label"
+											htmlFor="requiresPHP"
+										>
+											Requires PHP
+										</label>
+									</div>
+									<div className="form-check">
+										<input
+											className="form-check-input"
+											type="checkbox"
+											id="testedUpTo"
+											name="testedUpTo"
+											checked={ showTestedUpTo }
+											onChange={ toggleTestedUpTo }
+										/>
+										<label
+											className="form-check-label"
+											htmlFor="testedUpTo"
+										>
+											Tested up to
+										</label>
+									</div>
+									<div className="form-check">
+										<input
+											className="form-check-input"
+											type="checkbox"
+											id="version"
+											name="version"
+											checked={ showVersion }
+											onChange={ toggleVersion }
+										/>
+										<label
+											className="form-check-label"
+											htmlFor="version"
+										>
+											Version
+										</label>
+									</div>
+								</div>
+							</>
+						) }
 					</div>
-				</>
-			) }
+				</div>
+
+				<div className="col-md-9 col-12 m-0 p-0">
+					{ data && (
+						<div className="container">
+							<div className="row m-0">
+								{ data.map( ( plugin: any ) => (
+									<Plugin
+										plugin={ plugin }
+										key={ uuidv4() }
+										showActiveInstalls={
+											showActiveInstalls
+										}
+										showDownloads={ showDownloads }
+										showNumberOfRatings={
+											showNumberOfRatings
+										}
+										showRating={ showRating }
+										showRequiresAtLeast={
+											showRequiresAtLeast
+										}
+										showRequiresPHP={ showRequiresPHP }
+										showTestedUpTo={ showTestedUpTo }
+										showVersion={ showVersion }
+									/>
+								) ) }
+							</div>
+						</div>
+					) }
+				</div>
+			</div>
 		</div>
 	);
 }

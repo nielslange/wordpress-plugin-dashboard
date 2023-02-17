@@ -12,7 +12,7 @@ function Plugin( props: any ) {
 	} = props;
 
 	return (
-		<div className="col-sm-6 col-lg-3">
+		<div className="col-sm-12 col-md-6 col-lg-4 col-xl-4 px-2 py-3">
 			<div className="card">
 				<img
 					src={ plugin.banners[ 'low' ] }
