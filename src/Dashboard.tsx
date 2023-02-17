@@ -187,7 +187,7 @@ function Dashboard() {
 	};
 
 	return (
-		<div id="dashboard">
+		<div className="py-4">
 			<h1>Plugin Dashboard</h1>
 			{ loading && <p>Loading...</p> }
 			{ error && (
@@ -195,106 +195,185 @@ function Dashboard() {
 			) }
 			{ data && (
 				<>
-					<p>
+					<p className="lead">
 						The following { data.length } plugins have been
-						downloaded { downloads.toLocaleString() } and installed{ ' ' }
-						{ installs.toLocaleString() } times.
+						downloaded{ ' ' }
+						<strong>{ downloads.toLocaleString() }</strong> and
+						installed <strong>{ installs.toLocaleString() }</strong>{ ' ' }
+						times.
 					</p>
-					<p>
-						Sort by{ ' ' }
-						<select name="sortField" onChange={ handelSortField }>
-							<option value="activeInstalls">
-								active installs
-							</option>
-							<option value="downloads">downloads</option>
-							<option value="numberOfRatings">
-								number of ratings
-							</option>
-							<option value="pluginName">plugin name</option>
-							<option value="rating">rating</option>
-							<option value="requiresAtLeast">
-								required WordPress version
-							</option>
-							<option value="requiresPHP">
-								required PHP version
-							</option>
-							<option value="testedUpTo">tested up to</option>
-						</select>{ ' ' }
-						<select name="sortOrder" onChange={ handelSortOrder }>
-							<option value="desc">desc</option>
-							<option value="asc">asc</option>
-						</select>{ ' ' }
-						Show
-						<input
-							type="checkbox"
-							name="activeInstalls"
-							id="activeInstalls"
-							checked={ showActiveInstalls }
-							onChange={ toggleActiveInstalls }
-						/>
-						<label htmlFor="activeInstalls">Active installs</label>
-						<input
-							type="checkbox"
-							name="downloads"
-							id="downloads"
-							checked={ showDownloads }
-							onChange={ toggleDownloads }
-						/>
-						<label htmlFor="downloads">Downloads</label>
-						<input
-							type="checkbox"
-							name="numberOfRatings"
-							id="numberOfRatings"
-							checked={ showNumberOfRatings }
-							onChange={ toggleNumberOfRatings }
-						/>
-						<label htmlFor="numberOfRatings">
-							Number of ratings
-						</label>
-						<input
-							type="checkbox"
-							name="rating"
-							id="rating"
-							checked={ showRating }
-							onChange={ toggleRating }
-						/>
-						<label htmlFor="rating">Rating</label>
-						<input
-							type="checkbox"
-							name="requiresAtLeast"
-							id="requiresAtLeast"
-							checked={ showRequiresAtLeast }
-							onChange={ toggleRequiresAtLeast }
-						/>
-						<label htmlFor="requiresAtLeast">
-							Requires at least
-						</label>
-						<input
-							type="checkbox"
-							name="requiresPHP"
-							id="requiresPHP"
-							checked={ showRequiresPHP }
-							onChange={ toggleRequiresPHP }
-						/>
-						<label htmlFor="requiresPHP">Requires PHP</label>
-						<input
-							type="checkbox"
-							name="testedUpTo"
-							id="testedUpTo"
-							checked={ showTestedUpTo }
-							onChange={ toggleTestedUpTo }
-						/>
-						<label htmlFor="testedUpTo">Tested up to</label>
-						<input
-							type="checkbox"
-							name="version"
-							id="version"
-							checked={ showVersion }
-							onChange={ toggleVersion }
-						/>
-						<label htmlFor="version">Version</label>
-					</p>
-					<div className="pluginCards">
+					<form className="row g-3">
+						<div className="col-auto">Sort by</div>
+						<div className="col-auto">
+							<select
+								className="form-select"
+								aria-label="Select sort field"
+								name="sortField"
+								onChange={ handelSortField }
+							>
+								<option value="activeInstalls">
+									active installs
+								</option>
+								<option value="downloads">downloads</option>
+								<option value="numberOfRatings">
+									number of ratings
+								</option>
+								<option value="pluginName">plugin name</option>
+								<option value="rating">rating</option>
+								<option value="requiresAtLeast">
+									required WordPress version
+								</option>
+								<option value="requiresPHP">
+									required PHP version
+								</option>
+								<option value="testedUpTo">tested up to</option>
+							</select>
+						</div>
+						<div className="col-auto">
+							<select
+								className="form-select"
+								aria-label="Select sort order"
+								name="sortOrder"
+								onChange={ handelSortOrder }
+							>
+								<option value="desc">desc</option>
+								<option value="asc">asc</option>
+							</select>
+						</div>
+					</form>
+
+					<div className="my-3">
+						<div className="form-check form-check-inline">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								id="activeInstalls"
+								name="activeInstalls"
+								checked={ showActiveInstalls }
+								onChange={ toggleActiveInstalls }
+							/>
+							<label
+								className="form-check-label"
+								htmlFor="activeInstalls"
+							>
+								Active installs
+							</label>
+						</div>
+						<div className="form-check form-check-inline">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								id="downloads"
+								name="downloads"
+								checked={ showDownloads }
+								onChange={ toggleDownloads }
+							/>
+							<label
+								className="form-check-label"
+								htmlFor="downloads"
+							>
+								Downloads
+							</label>
+						</div>
+						<div className="form-check form-check-inline">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								id="numberOfRatings"
+								name="numberOfRatings"
+								checked={ showNumberOfRatings }
+								onChange={ toggleNumberOfRatings }
+							/>
+							<label
+								className="form-check-label"
+								htmlFor="numberOfRatings"
+							>
+								Number of ratings
+							</label>
+						</div>
+						<div className="form-check form-check-inline">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								id="rating"
+								name="rating"
+								checked={ showRating }
+								onChange={ toggleRating }
+							/>
+							<label
+								className="form-check-label"
+								htmlFor="rating"
+							>
+								Rating
+							</label>
+						</div>
+						<div className="form-check form-check-inline">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								id="requiresAtLeast"
+								name="requiresAtLeast"
+								checked={ showRequiresAtLeast }
+								onChange={ toggleRequiresAtLeast }
+							/>
+							<label
+								className="form-check-label"
+								htmlFor="requiresAtLeast"
+							>
+								Requires at least
+							</label>
+						</div>
+						<div className="form-check form-check-inline">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								id="requiresPHP"
+								name="requiresPHP"
+								checked={ showRequiresPHP }
+								onChange={ toggleRequiresPHP }
+							/>
+							<label
+								className="form-check-label"
+								htmlFor="requiresPHP"
+							>
+								Requires PHP
+							</label>
+						</div>
+						<div className="form-check form-check-inline">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								id="testedUpTo"
+								name="testedUpTo"
+								checked={ showTestedUpTo }
+								onChange={ toggleTestedUpTo }
+							/>
+							<label
+								className="form-check-label"
+								htmlFor="testedUpTo"
+							>
+								Tested up to
+							</label>
+						</div>
+						<div className="form-check form-check-inline">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								id="version"
+								name="version"
+								checked={ showVersion }
+								onChange={ toggleVersion }
+							/>
+							<label
+								className="form-check-label"
+								htmlFor="version"
+							>
+								Version
+							</label>
+						</div>
+					</div>
+
+					<div className="row gy-5">
 						{ data.map( ( plugin: any ) => (
 							<Plugin
 								plugin={ plugin }
