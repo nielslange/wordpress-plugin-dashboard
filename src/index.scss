@@ -1,0 +1,83 @@
+:root {
+	font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+	line-height: 1.5;
+	font-weight: 400;
+
+	--nord0: #2e3440;
+	--nord1: #3b4252;
+	--nord2: #434c5e;
+	--nord3: #4c566a;
+	--nord4: #d8dee9;
+	--nord5: #e5e9f0;
+	--nord6: #eceff4;
+	--nord7: #8fbcbb;
+	--nord8: #88c0d0;
+	--nord9: #81a1c1;
+	--nord10: #5e81ac;
+	--nord11: #bf616a;
+	--nord12: #d08770;
+	--nord13: #ebcb8b;
+	--nord14: #a3be8c;
+	--nord15: #b48ead;
+
+	color: var(--nord4);
+	background-color: var(--nord0);
+
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-text-size-adjust: 100%;
+}
+
+body {
+	margin: 0;
+	padding: 0 20px;
+}
+
+.pluginCards {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+	grid-gap: 20px;
+	height: 100%;
+
+	.pluginCard {
+		border: 1px solid var(--nord4);
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+
+		.pluginCardBanner {
+			img {
+				width: 100%;
+				display: block;
+			}
+		}
+
+		.pluginCardContent {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			height: 100%;
+			padding: 20px;
+			h2 {
+				margin: 0;
+				font-size: 1.5rem;
+				font-weight: 500;
+				line-height: 1.2;
+			}
+			table {
+				width: 100%;
+				border-collapse: collapse;
+
+				tr {
+					border-bottom: 1px solid #ccc;
+
+					td:nth-child(2) {
+						text-align: right;
+					}
+				}
+			}
+		}
+	}
+}
