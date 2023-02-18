@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { useState, useEffect } from 'react';
-import Plugin from './Plugin';
+import { Card } from './Card';
 
-function Dashboard() {
+export const Dashboard = () => {
 	const [ data, setData ] = useState< any >( null );
 	const [ searchField, setSearchField ] = useState( 'SMNTCS' );
 	const [ sortField, setSortField ] = useState( 'downloads' );
@@ -41,7 +41,6 @@ function Dashboard() {
 			} )
 			.then( ( data ) => {
 				plugins = data[ 'plugins' ];
-				console.log( plugins );
 				if ( sortOrder === 'desc' ) {
 					switch ( sortField ) {
 						case 'activeInstalls':
@@ -194,7 +193,7 @@ function Dashboard() {
 	return (
 		<div className="container-fluid">
 			<div className="row">
-				<div className="col-md-3 col-xxl-2 col-12 m-0 p-0">
+				<div className="col-md-3 col-xxl-3 col-12 m-0 p-0">
 					<div className="text-bg-dark p-4 vh-100 sticky-top">
 						<h3>Plugin Dashboard</h3>
 
@@ -216,6 +215,7 @@ function Dashboard() {
 									</strong>{ ' ' }
 									times.
 								</p>
+
 								<form>
 									<p>
 										<label
@@ -428,12 +428,12 @@ function Dashboard() {
 					</div>
 				</div>
 
-				<div className="col-md-9 col-xxl-10 col-12 m-0 p-0">
+				<div className="col-md-9 col-xxl-9 col-12 m-0 p-0">
 					{ data && (
 						<div className="container-fluid">
 							<div className="row m-0">
 								{ data.map( ( plugin: any ) => (
-									<Plugin
+									<Card
 										plugin={ plugin }
 										key={ uuidv4() }
 										showActiveInstalls={
@@ -459,6 +459,4 @@ function Dashboard() {
 			</div>
 		</div>
 	);
-}
-
-export default Dashboard;
+};
