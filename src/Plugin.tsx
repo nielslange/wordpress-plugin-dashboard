@@ -11,17 +11,31 @@ function Plugin( props: any ) {
 		showVersion,
 	} = props;
 
+	const decodeHTML = function ( html: any ) {
+		var txt = document.createElement( 'textarea' );
+		txt.innerHTML = html;
+		return txt.value;
+	};
+
+	const pluginLink = `https://wordpress.org/plugins/${ plugin.slug }`;
+
 	return (
-		<div className="col-sm-12 col-md-6 col-lg-4 col-xl-4 px-2 py-3">
+		<div className="col-sm-12 col-md-6 col-lg-4 col-xxl-3 px-2 py-3">
 			<div className="card">
-				<img
-					src={ plugin.banners[ 'low' ] }
-					alt={ plugin.name }
-					className="card-img-top"
-				/>
+				<a href={ pluginLink } target="_blank">
+					<img
+						src={ plugin.banners[ 'low' ] }
+						alt={ decodeHTML( plugin.name ) }
+						className="card-img-top"
+					/>
+				</a>
 				<div className="card-body">
-					<h5 className="card-title">{ plugin.name }</h5>
-					<p className="card-text">{ plugin.short_description }</p>
+					<h5 className="card-title">
+						{ decodeHTML( plugin.name ) }
+					</h5>
+					<p className="card-text">
+						{ decodeHTML( plugin.short_description ) }
+					</p>
 
 					<table className="table">
 						<tbody>

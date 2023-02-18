@@ -4,6 +4,7 @@ import Plugin from './Plugin';
 
 function Dashboard() {
 	const [ data, setData ] = useState< any >( null );
+	const [ searchField, setSearchField ] = useState( 'SMNTCS' );
 	const [ sortField, setSortField ] = useState( 'downloads' );
 	const [ sortOrder, setSortOrder ] = useState( 'desc' );
 	const [ showActiveInstalls, setShowActiveInstalls ] = useState( true );
@@ -22,7 +23,7 @@ function Dashboard() {
 	let url = new URL( 'https://api.wordpress.org/plugins/info/1.2/' );
 	url.searchParams.append( 'action', 'query_plugins' );
 	url.searchParams.append( 'request[fields][banners]', 'true' );
-	url.searchParams.append( 'request[search]', 'smntcs' );
+	url.searchParams.append( 'request[search]', searchField );
 
 	let plugins;
 	let downloadCount = 0;
@@ -40,7 +41,7 @@ function Dashboard() {
 			} )
 			.then( ( data ) => {
 				plugins = data[ 'plugins' ];
-
+				console.log( plugins );
 				if ( sortOrder === 'desc' ) {
 					switch ( sortField ) {
 						case 'activeInstalls':
@@ -144,7 +145,11 @@ function Dashboard() {
 			.finally( () => {
 				setLoading( false );
 			} );
-	}, [ sortField, sortOrder ] );
+	}, [ searchField, sortField, sortOrder ] );
+
+	const handelSearch = ( e: any ) => {
+		setSearchField( e.target.value );
+	};
 
 	const handelSortField = ( e: any ) => {
 		setSortField( e.target.value );
@@ -189,7 +194,7 @@ function Dashboard() {
 	return (
 		<div className="container-fluid">
 			<div className="row">
-				<div className="col-md-3 col-12 m-0 p-0">
+				<div className="col-md-3 col-xxl-2 col-12 m-0 p-0">
 					<div className="text-bg-dark p-4 vh-100 sticky-top">
 						<h3>Plugin Dashboard</h3>
 
@@ -212,8 +217,30 @@ function Dashboard() {
 									times.
 								</p>
 								<form>
-									<p className="lead">Sort by</p>
 									<p>
+										<label
+											htmlFor="search"
+											className="form-label"
+										>
+											Search for
+										</label>
+										<input
+											className="form-control"
+											type="text"
+											name="search"
+											id="search"
+											placeholder="plugin slug"
+											onChange={ handelSearch }
+											value={ searchField }
+										/>
+									</p>
+									<p>
+										<label
+											htmlFor="sortField"
+											className="form-label"
+										>
+											Sort by
+										</label>
 										<select
 											className="form-select"
 											aria-label="Select sort field"
@@ -259,8 +286,14 @@ function Dashboard() {
 									</p>
 								</form>
 
-								<p className="lead">Show</p>
-								<div className="my-3">
+								<div>
+									<label
+										htmlFor="sortField"
+										className="form-label"
+									>
+										Show / hide fields
+									</label>
+
 									<div className="form-check">
 										<input
 											className="form-check-input"
@@ -395,9 +428,9 @@ function Dashboard() {
 					</div>
 				</div>
 
-				<div className="col-md-9 col-12 m-0 p-0">
+				<div className="col-md-9 col-xxl-10 col-12 m-0 p-0">
 					{ data && (
-						<div className="container">
+						<div className="container-fluid">
 							<div className="row m-0">
 								{ data.map( ( plugin: any ) => (
 									<Plugin
