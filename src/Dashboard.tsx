@@ -193,7 +193,7 @@ export const Dashboard = () => {
 	return (
 		<div className="container-fluid">
 			<div className="row">
-				<div className="col-md-3 col-xxl-3 col-12 m-0 p-0">
+				<div className="col-md-3 col-xl-3 col-xxl-1 col-12 m-0 p-0">
 					<div className="text-bg-dark p-4 vh-100 sticky-top">
 						<h3>Plugin Dashboard</h3>
 
@@ -428,7 +428,7 @@ export const Dashboard = () => {
 					</div>
 				</div>
 
-				<div className="col-md-9 col-xxl-9 col-12 m-0 p-0">
+				<div className="col-md-9 col-xl-9 col-xxl-11 col-12 m-0 p-0">
 					{ data && (
 						<div className="container-fluid">
 							<div className="row m-0">
