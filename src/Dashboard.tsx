@@ -43,87 +43,25 @@ export const Dashboard = () => {
 				plugins = data[ 'plugins' ];
 				if ( sortOrder === 'desc' ) {
 					switch ( sortField ) {
-						case 'activeInstalls':
-							plugins.sort( ( a: any, b: any ) =>
-								a.active_installs < b.active_installs ? 1 : -1
-							);
-						case 'downloads':
-							plugins.sort( ( a: any, b: any ) =>
-								a.downloaded < b.downloaded ? 1 : -1
-							);
-							break;
-						case 'testedUpTo':
-							plugins.sort( ( a: any, b: any ) =>
-								a.tested < b.tested ? 1 : -1
-							);
-							break;
-						case 'pluginName':
-							plugins.sort( ( a: any, b: any ) =>
-								b.name.localeCompare( a.name )
-							);
-							break;
-						case 'rating':
-							plugins.sort( ( a: any, b: any ) =>
-								a.rating < b.rating ? 1 : -1
-							);
-							break;
-						case 'numberOfRatings':
-							plugins.sort( ( a: any, b: any ) =>
-								a.num_ratings < b.num_ratings ? 1 : -1
-							);
-							break;
-						case 'requiresAtLeast':
-							plugins.sort( ( a: any, b: any ) =>
-								a.requires < b.requires ? 1 : -1
-							);
-							break;
-						case 'requiresPHP':
-							plugins.sort( ( a: any, b: any ) =>
-								a.requires_php < b.requires_php ? 1 : -1
-							);
-							break;
+						case 'activeInstalls': plugins.sort( ( a: any, b: any ) => ( a.active_installs < b.active_installs ? 1 : -1 ) ); break; // prettier-ignore
+						case 'downloads': plugins.sort( ( a: any, b: any ) => ( a.downloaded < b.downloaded ? 1 : -1 ) ); break; // prettier-ignore
+						case 'testedUpTo': plugins.sort( ( a: any, b: any ) => ( a.tested < b.tested ? 1 : -1 ) ); break; // prettier-ignore
+						case 'pluginName': plugins.sort( ( a: any, b: any ) => b.name.localeCompare( a.name ) ); break; // prettier-ignore
+						case 'rating': plugins.sort( ( a: any, b: any ) => ( a.rating < b.rating ? 1 : -1 ) ); break; // prettier-ignore
+						case 'numberOfRatings': plugins.sort( ( a: any, b: any ) => ( a.num_ratings < b.num_ratings ? 1 : -1 ) ); break; // prettier-ignore
+						case 'requiresAtLeast': plugins.sort( ( a: any, b: any ) => ( a.requires < b.requires ? 1 : -1 ) ); break; // prettier-ignore
+						case 'requiresPHP': plugins.sort( ( a: any, b: any ) => ( a.requires_php < b.requires_php ? 1 : -1 ) ); break; // prettier-ignore
 					}
 				} else {
 					switch ( sortField ) {
-						case 'activeInstalls':
-							plugins.sort( ( a: any, b: any ) =>
-								a.active_installs > b.active_installs ? 1 : -1
-							);
-						case 'downloads':
-							plugins.sort( ( a: any, b: any ) =>
-								a.downloaded > b.downloaded ? 1 : -1
-							);
-							break;
-						case 'testedUpTo':
-							plugins.sort( ( a: any, b: any ) =>
-								a.tested < b.tested ? 1 : -1
-							);
-							break;
-						case 'pluginName':
-							plugins.sort( ( a: any, b: any ) =>
-								a.name.localeCompare( b.name )
-							);
-							break;
-						case 'rating':
-							plugins.sort( ( a: any, b: any ) =>
-								a.rating > b.rating ? 1 : -1
-							);
-							break;
-						case 'numberOfRatings':
-							plugins.sort( ( a: any, b: any ) =>
-								a.num_ratings > b.num_ratings ? 1 : -1
-							);
-							break;
-						case 'requiresAtLeast':
-							plugins.sort( ( a: any, b: any ) =>
-								a.requires > b.requires ? 1 : -1
-							);
-							break;
-						case 'requiresPHP':
-							plugins.sort( ( a: any, b: any ) =>
-								a.requires_php > b.requires_php ? 1 : -1
-							);
-							break;
+						case 'activeInstalls': plugins.sort( ( a: any, b: any ) => ( a.active_installs > b.active_installs ? 1 : -1 ) ); break; // prettier-ignore
+						case 'downloads': plugins.sort( ( a: any, b: any ) => ( a.downloaded > b.downloaded ? 1 : -1 ) ); break; // prettier-ignore
+						case 'testedUpTo': plugins.sort( ( a: any, b: any ) => ( a.tested > b.tested ? 1 : -1 ) ); break; // prettier-ignore
+						case 'pluginName': plugins.sort( ( a: any, b: any ) => a.name.localeCompare( b.name ) ); break; // prettier-ignore
+						case 'rating': plugins.sort( ( a: any, b: any ) => ( a.rating > b.rating ? 1 : -1 ) ); break; // prettier-ignore
+						case 'numberOfRatings': plugins.sort( ( a: any, b: any ) => ( a.num_ratings > b.num_ratings ? 1 : -1 ) ); break; // prettier-ignore
+						case 'requiresAtLeast': plugins.sort( ( a: any, b: any ) => ( a.requires > b.requires ? 1 : -1 ) ); break; // prettier-ignore
+						case 'requiresPHP': plugins.sort( ( a: any, b: any ) => ( a.requires_php > b.requires_php ? 1 : -1 ) ); break; // prettier-ignore
 					}
 				}
 
@@ -195,7 +133,7 @@ export const Dashboard = () => {
 			<div className="row">
 				<div className="col-md-3 col-xl-3 col-xxl-2 col-12 m-0 p-0">
 					<div className="text-bg-dark p-4 vh-100 sticky-top">
-						<h3>Plugin Dashboard</h3>
+						<h3>WP Plugin Dashboard</h3>
 
 						{ loading && <p>Loading...</p> }
 						{ error && (
