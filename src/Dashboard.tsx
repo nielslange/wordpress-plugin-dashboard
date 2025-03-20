@@ -27,71 +27,109 @@ export const Dashboard = () => {
 		version: 'version',
 	};
 
+	// Helper function to get value from URL parameters or localStorage
+	const getInitialValue = ( key: string, defaultValue: string ): string => {
+		const params = new URLSearchParams( window.location.search );
+		const urlValue = params.get( key );
+
+		if ( urlValue !== null ) {
+			// Save to localStorage if it's in URL but not in localStorage
+			localStorage.setItem( key, urlValue );
+			return urlValue;
+		}
+
+		const storedValue = localStorage.getItem( key );
+		return storedValue !== null ? storedValue : defaultValue;
+	};
+
+	// Helper function to get boolean initial value
+	const getInitialBoolValue = (
+		key: string,
+		defaultValue: boolean
+	): boolean => {
+		const params = new URLSearchParams( window.location.search );
+		const urlValue = params.get( key );
+
+		if ( urlValue !== null ) {
+			const boolValue = urlValue === 'true';
+			localStorage.setItem( key, boolValue.toString() );
+			return boolValue;
+		}
+
+		const storedValue = localStorage.getItem( key );
+		return storedValue !== null ? storedValue === 'true' : defaultValue;
+	};
+
+	// Helper function to update state, localStorage, and URL params
+	const updateSetting = ( key: string, value: string | boolean ) => {
+		const stringValue = value.toString();
+
+		// Update localStorage
+		localStorage.setItem( key, stringValue );
+
+		// Update URL params
+		const params = new URLSearchParams( window.location.search );
+		params.set( key, stringValue );
+		window.history.replaceState(
+			{},
+			'',
+			`${ window.location.pathname }?${ params }`
+		);
+	};
+
 	const [ data, setData ] = useState< Plugin[] | null >( null );
 	const [ downloads, setDownloads ] = useState( 0 );
 	const [ installs, setInstalls ] = useState( 0 );
 	const [ loading, setLoading ] = useState( true );
 	const [ error, setError ] = useState( null );
 
-	const [ searchField, setSearchField ] = useState( () => {
-		const params = new URLSearchParams( window.location.search );
-		return params.get( 'searchField' ) || 'SMNTCS';
-	} );
+	const [ searchField, setSearchField ] = useState( () =>
+		getInitialValue( 'searchField', 'SMNTCS' )
+	);
 
-	const [ sortField, setSortField ] = useState( () => {
-		const params = new URLSearchParams( window.location.search );
-		return params.get( 'sortField' ) || 'downloads';
-	} );
+	const [ sortField, setSortField ] = useState( () =>
+		getInitialValue( 'sortField', 'downloads' )
+	);
 
-	const [ sortOrder, setSortOrder ] = useState( () => {
-		const params = new URLSearchParams( window.location.search );
-		return params.get( 'sortOrder' ) || 'desc';
-	} );
+	const [ sortOrder, setSortOrder ] = useState( () =>
+		getInitialValue( 'sortOrder', 'desc' )
+	);
 
-	const [ showDescription, setShowDescription ] = useState( () => {
-		const params = new URLSearchParams( window.location.search );
-		return params.get( 'showDescription' ) === 'false' ? false : true;
-	} );
+	const [ showDescription, setShowDescription ] = useState( () =>
+		getInitialBoolValue( 'showDescription', true )
+	);
 
-	const [ showActiveInstalls, setShowActiveInstalls ] = useState( () => {
-		const params = new URLSearchParams( window.location.search );
-		return params.get( 'showActiveInstalls' ) === 'false' ? false : true;
-	} );
+	const [ showActiveInstalls, setShowActiveInstalls ] = useState( () =>
+		getInitialBoolValue( 'showActiveInstalls', true )
+	);
 
-	const [ showDownloads, setShowDownloads ] = useState( () => {
-		const params = new URLSearchParams( window.location.search );
-		return params.get( 'showDownloads' ) === 'false' ? false : true;
-	} );
+	const [ showDownloads, setShowDownloads ] = useState( () =>
+		getInitialBoolValue( 'showDownloads', true )
+	);
 
-	const [ showNumberOfRatings, setShowNumberOfRatings ] = useState( () => {
-		const params = new URLSearchParams( window.location.search );
-		return params.get( 'showNumberOfRatings' ) === 'false' ? false : true;
-	} );
+	const [ showNumberOfRatings, setShowNumberOfRatings ] = useState( () =>
+		getInitialBoolValue( 'showNumberOfRatings', true )
+	);
 
-	const [ showRating, setShowRating ] = useState( () => {
-		const params = new URLSearchParams( window.location.search );
-		return params.get( 'showRating' ) === 'false' ? false : true;
-	} );
+	const [ showRating, setShowRating ] = useState( () =>
+		getInitialBoolValue( 'showRating', true )
+	);
 
-	const [ showRequiresAtLeast, setShowRequiresAtLeast ] = useState( () => {
-		const params = new URLSearchParams( window.location.search );
-		return params.get( 'showRequiresAtLeast' ) === 'false' ? false : true;
-	} );
+	const [ showRequiresAtLeast, setShowRequiresAtLeast ] = useState( () =>
+		getInitialBoolValue( 'showRequiresAtLeast', true )
+	);
 
-	const [ showRequiresPHP, setShowRequiresPHP ] = useState( () => {
-		const params = new URLSearchParams( window.location.search );
-		return params.get( 'showRequiresPHP' ) === 'false' ? false : true;
-	} );
+	const [ showRequiresPHP, setShowRequiresPHP ] = useState( () =>
+		getInitialBoolValue( 'showRequiresPHP', true )
+	);
 
-	const [ showTestedUpTo, setShowTestedUpTo ] = useState( () => {
-		const params = new URLSearchParams( window.location.search );
-		return params.get( 'showTestedUpTo' ) === 'false' ? false : true;
-	} );
+	const [ showTestedUpTo, setShowTestedUpTo ] = useState( () =>
+		getInitialBoolValue( 'showTestedUpTo', true )
+	);
 
-	const [ showVersion, setShowVersion ] = useState( () => {
-		const params = new URLSearchParams( window.location.search );
-		return params.get( 'showVersion' ) === 'false' ? false : true;
-	} );
+	const [ showVersion, setShowVersion ] = useState( () =>
+		getInitialBoolValue( 'showVersion', true )
+	);
 
 	const sortOptions = [
 		{
@@ -204,157 +242,73 @@ export const Dashboard = () => {
 	const handleSearch = ( e: React.ChangeEvent< HTMLInputElement > ) => {
 		const newSearchField = e.target.value;
 		setSearchField( newSearchField );
-
-		const params = new URLSearchParams( window.location.search );
-		params.set( 'searchField', newSearchField );
-		window.history.replaceState(
-			{},
-			'',
-			`${ window.location.pathname }?${ params }`
-		);
+		updateSetting( 'searchField', newSearchField );
 	};
 
 	const handleSortField = ( e: React.ChangeEvent< HTMLSelectElement > ) => {
 		const newSortField = e.target.value;
 		setSortField( newSortField );
-
-		const params = new URLSearchParams( window.location.search );
-		params.set( 'sortField', newSortField );
-		window.history.replaceState(
-			{},
-			'',
-			`${ window.location.pathname }?${ params }`
-		);
+		updateSetting( 'sortField', newSortField );
 	};
 
 	const handleSortOrder = ( e: React.ChangeEvent< HTMLSelectElement > ) => {
 		const newSortOrder = e.target.value;
 		setSortOrder( newSortOrder );
-
-		const params = new URLSearchParams( window.location.search );
-		params.set( 'sortOrder', newSortOrder );
-		window.history.replaceState(
-			{},
-			'',
-			`${ window.location.pathname }?${ params }`
-		);
+		updateSetting( 'sortOrder', newSortOrder );
 	};
 
 	const toggleActiveInstalls = () => {
 		const currentSetting = ! showActiveInstalls;
 		setShowActiveInstalls( currentSetting );
-
-		const params = new URLSearchParams( window.location.search );
-		params.set( 'showActiveInstalls', currentSetting.toString() );
-		window.history.replaceState(
-			{},
-			'',
-			`${ window.location.pathname }?${ params }`
-		);
+		updateSetting( 'showActiveInstalls', currentSetting );
 	};
 
 	const toggleDownloads = () => {
 		const currentSetting = ! showDownloads;
 		setShowDownloads( currentSetting );
-
-		const params = new URLSearchParams( window.location.search );
-		params.set( 'showDownloads', currentSetting.toString() );
-		window.history.replaceState(
-			{},
-			'',
-			`${ window.location.pathname }?${ params }`
-		);
+		updateSetting( 'showDownloads', currentSetting );
 	};
 
 	const toggleNumberOfRatings = () => {
 		const currentSetting = ! showNumberOfRatings;
 		setShowNumberOfRatings( currentSetting );
-
-		const params = new URLSearchParams( window.location.search );
-		params.set( 'showNumberOfRatings', currentSetting.toString() );
-		window.history.replaceState(
-			{},
-			'',
-			`${ window.location.pathname }?${ params }`
-		);
+		updateSetting( 'showNumberOfRatings', currentSetting );
 	};
 
 	const toggleRating = () => {
 		const currentSetting = ! showRating;
 		setShowRating( currentSetting );
-
-		const params = new URLSearchParams( window.location.search );
-		params.set( 'showRating', currentSetting.toString() );
-		window.history.replaceState(
-			{},
-			'',
-			`${ window.location.pathname }?${ params }`
-		);
+		updateSetting( 'showRating', currentSetting );
 	};
 
 	const toggleRequiresAtLeast = () => {
 		const currentSetting = ! showRequiresAtLeast;
 		setShowRequiresAtLeast( currentSetting );
-
-		const params = new URLSearchParams( window.location.search );
-		params.set( 'showRequiresAtLeast', currentSetting.toString() );
-		window.history.replaceState(
-			{},
-			'',
-			`${ window.location.pathname }?${ params }`
-		);
+		updateSetting( 'showRequiresAtLeast', currentSetting );
 	};
 
 	const toggleRequiresPHP = () => {
 		const currentSetting = ! showRequiresPHP;
 		setShowRequiresPHP( currentSetting );
-
-		const params = new URLSearchParams( window.location.search );
-		params.set( 'showRequiresPHP', currentSetting.toString() );
-		window.history.replaceState(
-			{},
-			'',
-			`${ window.location.pathname }?${ params }`
-		);
+		updateSetting( 'showRequiresPHP', currentSetting );
 	};
 
 	const toggleTestedUpTo = () => {
 		const currentSetting = ! showTestedUpTo;
 		setShowTestedUpTo( currentSetting );
-
-		const params = new URLSearchParams( window.location.search );
-		params.set( 'showTestedUpTo', currentSetting.toString() );
-		window.history.replaceState(
-			{},
-			'',
-			`${ window.location.pathname }?${ params }`
-		);
+		updateSetting( 'showTestedUpTo', currentSetting );
 	};
 
 	const toggleVersion = () => {
 		const currentSetting = ! showVersion;
 		setShowVersion( currentSetting );
-
-		const params = new URLSearchParams( window.location.search );
-		params.set( 'showVersion', currentSetting.toString() );
-		window.history.replaceState(
-			{},
-			'',
-			`${ window.location.pathname }?${ params }`
-		);
+		updateSetting( 'showVersion', currentSetting );
 	};
 
 	const toggleDescription = () => {
 		const currentSetting = ! showDescription;
 		setShowDescription( currentSetting );
-
-		const params = new URLSearchParams( window.location.search );
-		params.set( 'showDescription', currentSetting.toString() );
-		window.history.replaceState(
-			{},
-			'',
-			`${ window.location.pathname }?${ params }`
-		);
+		updateSetting( 'showDescription', currentSetting );
 	};
 
 	console.log( { sortField } );
@@ -362,8 +316,8 @@ export const Dashboard = () => {
 	return (
 		<div className="container-fluid">
 			<div className="row">
-				<div className="col-md-3 col-xl-3 col-xxl-2 col-12 m-0 p-0">
-					<div className="text-bg-dark p-4 vh-100 sticky-top">
+				<div className="col-md-3 col-xl-3 col-xxl-2 col-12 m-0 p-0 sidebar">
+					<div className="p-4 vh-100 sticky-top">
 						<h3>WP Plugin Dashboard</h3>
 
 						{ loading && <p>Loading...</p> }
@@ -450,7 +404,7 @@ export const Dashboard = () => {
 									>
 										Show / hide fields
 									</label>
-									<div className="form-check">
+									<div className="form-check form-switch">
 										<input
 											className="form-check-input"
 											type="checkbox"
@@ -466,7 +420,7 @@ export const Dashboard = () => {
 											Description
 										</label>
 									</div>
-									<div className="form-check">
+									<div className="form-check form-switch">
 										<input
 											className="form-check-input"
 											type="checkbox"
@@ -482,7 +436,7 @@ export const Dashboard = () => {
 											Active installs
 										</label>
 									</div>
-									<div className="form-check">
+									<div className="form-check form-switch">
 										<input
 											className="form-check-input"
 											type="checkbox"
@@ -498,7 +452,7 @@ export const Dashboard = () => {
 											Downloads
 										</label>
 									</div>
-									<div className="form-check">
+									<div className="form-check form-switch">
 										<input
 											className="form-check-input"
 											type="checkbox"
@@ -514,7 +468,7 @@ export const Dashboard = () => {
 											Number of ratings
 										</label>
 									</div>
-									<div className="form-check">
+									<div className="form-check form-switch">
 										<input
 											className="form-check-input"
 											type="checkbox"
@@ -530,7 +484,7 @@ export const Dashboard = () => {
 											Rating
 										</label>
 									</div>
-									<div className="form-check">
+									<div className="form-check form-switch">
 										<input
 											className="form-check-input"
 											type="checkbox"
@@ -546,7 +500,7 @@ export const Dashboard = () => {
 											Requires at least
 										</label>
 									</div>
-									<div className="form-check">
+									<div className="form-check form-switch">
 										<input
 											className="form-check-input"
 											type="checkbox"
@@ -562,7 +516,7 @@ export const Dashboard = () => {
 											Requires PHP
 										</label>
 									</div>
-									<div className="form-check">
+									<div className="form-check form-switch">
 										<input
 											className="form-check-input"
 											type="checkbox"
@@ -578,7 +532,7 @@ export const Dashboard = () => {
 											Tested up to
 										</label>
 									</div>
-									<div className="form-check">
+									<div className="form-check form-switch">
 										<input
 											className="form-check-input"
 											type="checkbox"
@@ -600,7 +554,7 @@ export const Dashboard = () => {
 					</div>
 				</div>
 
-				<div className="col-md-9 col-xl-9 col-xxl-10 col-12 m-0 p-0">
+				<div className="col-md-9 col-xl-9 col-xxl-10 col-12 m-0 p-0 main">
 					{ data && (
 						<div className="container-fluid">
 							<div className="row m-0">
