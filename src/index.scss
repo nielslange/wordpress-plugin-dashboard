@@ -33,6 +33,33 @@ body {
 	background-color: var(--nord0);
 }
 
-table tr:last-child td {
-	border: none;
+.sidebar {
+	background-color: var(--nord0);
+	color: var(--nord6);
+}
+
+.main {
+	background-color: var(--nord1);
+
+	.card {
+		background-color: var(--nord0);
+		color: var(--nord6);
+
+		table {
+			margin: 0;
+
+			td {
+				background-color: var(--nord0);
+				color: var(--nord4);
+			}
+
+			td:last-child {
+				font-weight: 800;
+			}
+
+			tr:last-child td {
+				border: none;
+			}
+		}
+	}
 }
