@@ -15,6 +15,18 @@ interface Plugin {
 }
 
 export const Dashboard = () => {
+	const sortKeyMap: { [ key: string ]: string } = {
+		activeInstalls: 'active_installs',
+		downloads: 'downloaded',
+		testedUpTo: 'tested',
+		pluginName: 'name',
+		rating: 'rating',
+		numberOfRatings: 'num_ratings',
+		requiresAtLeast: 'requires',
+		requiresPHP: 'requires_php',
+		version: 'version',
+	};
+
 	const [ data, setData ] = useState< Plugin[] | null >( null );
 	const [ downloads, setDownloads ] = useState( 0 );
 	const [ installs, setInstalls ] = useState( 0 );
@@ -34,6 +46,11 @@ export const Dashboard = () => {
 	const [ sortOrder, setSortOrder ] = useState( () => {
 		const params = new URLSearchParams( window.location.search );
 		return params.get( 'sortOrder' ) || 'desc';
+	} );
+
+	const [ showDescription, setShowDescription ] = useState( () => {
+		const params = new URLSearchParams( window.location.search );
+		return params.get( 'showDescription' ) === 'false' ? false : true;
 	} );
 
 	const [ showActiveInstalls, setShowActiveInstalls ] = useState( () => {
@@ -111,10 +128,13 @@ export const Dashboard = () => {
 	const dynamicSort = ( field: any, sortOrder = 'asc' ) => {
 		return function ( a: any, b: any ) {
 			let result = 0;
+			const fieldName = sortKeyMap[ field ] || field;
+
 			if ( field === 'pluginName' || field === 'version' ) {
-				result = a[ field ].localeCompare( b[ field ] );
+				result = a[ fieldName ].localeCompare( b[ fieldName ] );
 			} else {
-				result = parseFloat( a[ field ] ) - parseFloat( b[ field ] );
+				result =
+					parseFloat( a[ fieldName ] ) - parseFloat( b[ fieldName ] );
 			}
 			return sortOrder === 'desc' ? -result : result;
 		};
@@ -126,8 +146,6 @@ export const Dashboard = () => {
 	url.searchParams.append( 'request[search]', searchField );
 
 	let plugins;
-	let downloadCount = 0;
-	let installCount = 0;
 
 	useEffect( () => {
 		fetch( url )
@@ -141,30 +159,21 @@ export const Dashboard = () => {
 			} )
 			.then( ( data ) => {
 				plugins = data[ 'plugins' ];
-				const sortKeyMap: { [ key: string ]: string } = {
-					activeInstalls: 'active_installs',
-					downloads: 'downloaded',
-					testedUpTo: 'tested',
-					pluginName: 'name',
-					rating: 'rating',
-					numberOfRatings: 'num_ratings',
-					requiresAtLeast: 'requires',
-					requiresPHP: 'requires_php',
-					version: 'version',
-				};
-
-				plugins.sort(
-					dynamicSort( sortKeyMap[ sortField ], sortOrder )
+				const sortedPlugins = [ ...plugins ].sort(
+					dynamicSort( sortField, sortOrder )
 				);
 
-				plugins.forEach( ( plugin: Plugin ) => {
-					downloadCount += plugin.downloaded;
-					installCount += plugin.active_installs;
-				} );
+				const totals = sortedPlugins.reduce(
+					( acc, plugin ) => ( {
+						downloads: acc.downloads + plugin.downloaded,
+						installs: acc.installs + plugin.active_installs,
+					} ),
+					{ downloads: 0, installs: 0 }
+				);
 
-				setData( plugins );
-				setDownloads( downloadCount );
-				setInstalls( installCount );
+				setData( sortedPlugins );
+				setDownloads( totals.downloads );
+				setInstalls( totals.installs );
 				setError( null );
 			} )
 			.catch( ( err ) => {
@@ -335,6 +344,19 @@ export const Dashboard = () => {
 		);
 	};
 
+	const toggleDescription = () => {
+		const currentSetting = ! showDescription;
+		setShowDescription( currentSetting );
+
+		const params = new URLSearchParams( window.location.search );
+		params.set( 'showDescription', currentSetting.toString() );
+		window.history.replaceState(
+			{},
+			'',
+			`${ window.location.pathname }?${ params }`
+		);
+	};
+
 	console.log( { sortField } );
 
 	return (
@@ -428,7 +450,22 @@ export const Dashboard = () => {
 									>
 										Show / hide fields
 									</label>
-
+									<div className="form-check">
+										<input
+											className="form-check-input"
+											type="checkbox"
+											id="description"
+											name="description"
+											checked={ showDescription }
+											onChange={ toggleDescription }
+										/>
+										<label
+											className="form-check-label"
+											htmlFor="description"
+										>
+											Description
+										</label>
+									</div>
 									<div className="form-check">
 										<input
 											className="form-check-input"
@@ -585,6 +622,7 @@ export const Dashboard = () => {
 										showRequiresPHP={ showRequiresPHP }
 										showTestedUpTo={ showTestedUpTo }
 										showVersion={ showVersion }
+										showDescription={ showDescription }
 									/>
 								) ) }
 							</div>

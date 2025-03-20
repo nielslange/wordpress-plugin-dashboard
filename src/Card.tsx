@@ -10,6 +10,7 @@ import Version from './Card/Version';
 export const Card = ( props: any ) => {
 	const {
 		plugin,
+		showDescription,
 		showActiveInstalls,
 		showDownloads,
 		showNumberOfRatings,
@@ -42,9 +43,11 @@ export const Card = ( props: any ) => {
 					<h5 className="card-title">
 						{ decodeHTML( plugin.name ) }
 					</h5>
-					<p className="card-text">
-						{ decodeHTML( plugin.short_description ) }
-					</p>
+					{ showDescription && (
+						<p className="card-text">
+							{ decodeHTML( plugin.short_description ) }
+						</p>
+					) }
 
 					<table className="table">
 						<tbody>
