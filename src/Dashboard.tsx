@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card } from './Card';
+import React from 'react';
 
 interface Plugin {
 	name: string;
@@ -20,6 +21,31 @@ interface Plugin {
 }
 
 export const Dashboard = () => {
+	// Add CSS animation styles
+	React.useEffect( () => {
+		const style = document.createElement( 'style' );
+		style.innerHTML = `
+			@keyframes spin {
+				0% { transform: rotate(0deg); }
+				100% { transform: rotate(360deg); }
+			}
+			.spinner {
+				display: inline-block;
+				animation: spin 1s linear infinite;
+				width: 0.9em;
+				height: 0.9em;
+				vertical-align: -0.1em;
+				margin: 0 0.15em;
+				stroke: currentColor;
+			}
+		`;
+		document.head.appendChild( style );
+
+		return () => {
+			document.head.removeChild( style );
+		};
+	}, [] );
+
 	const sortKeyMap: { [ key: string ]: string } = {
 		activeInstalls: 'active_installs',
 		downloads: 'downloaded',
@@ -165,6 +191,11 @@ export const Dashboard = () => {
 		getInitialBoolValue( 'showVersion', true )
 	);
 
+	const [ outdatedPluginsCount, setOutdatedPluginsCount ] = useState( 0 );
+
+	const [ outdatedCountCalculated, setOutdatedCountCalculated ] =
+		useState( false );
+
 	const sortOptions = [
 		{
 			key: 'activeInstalls',
@@ -283,7 +314,13 @@ export const Dashboard = () => {
 
 	let plugins;
 
+	// Reset calculation flag only when search field or WP version changes
 	useEffect( () => {
+		setOutdatedCountCalculated( false );
+	}, [ searchField, currentWPVersion ] );
+
+	useEffect( () => {
+		// Main data fetching effect
 		fetch( url )
 			.then( ( response ) => {
 				if ( ! response.ok ) {
@@ -295,6 +332,27 @@ export const Dashboard = () => {
 			} )
 			.then( ( data ) => {
 				plugins = data[ 'plugins' ];
+
+				// Calculate the count of outdated plugins
+				if ( currentWPVersion ) {
+					const outdatedCount = plugins.filter(
+						( plugin: Plugin ) => {
+							const pluginTestedVersion = normalizeVersionString(
+								plugin.tested
+							);
+							const wpVersion =
+								normalizeVersionString( currentWPVersion );
+							return (
+								compareVersions(
+									pluginTestedVersion,
+									wpVersion
+								) < 0
+							);
+						}
+					).length;
+					setOutdatedPluginsCount( outdatedCount );
+					setOutdatedCountCalculated( true );
+				}
 
 				// Filter plugins if showIncompatiblePlugins is active
 				let filteredPlugins = [ ...plugins ];
@@ -436,6 +494,9 @@ export const Dashboard = () => {
 		const currentSetting = ! showIncompatiblePlugins;
 		setShowIncompatiblePlugins( currentSetting );
 		updateSetting( 'showIncompatiblePlugins', currentSetting );
+
+		// Don't reset outdatedCountCalculated flag when toggling the checkbox
+		// We already have the count calculated, so no need to show spinner again
 	};
 
 	console.log( { sortField } );
@@ -524,7 +585,7 @@ export const Dashboard = () => {
 									</p>
 								</form>
 
-								{ currentWPVersion && (
+								{ ! loading && currentWPVersion && (
 									<div className="mt-4 pt-3">
 										<div className="mb-2 small">
 											Current version:{ ' ' }
@@ -551,6 +612,36 @@ export const Dashboard = () => {
 												htmlFor="showIncompatiblePlugins"
 											>
 												Show outdated plugins
+												{ ! outdatedCountCalculated ? (
+													<>
+														{ ' ' }
+														(
+														<svg
+															className="spinner"
+															viewBox="0 0 24 24"
+														>
+															<circle
+																cx="12"
+																cy="12"
+																r="10"
+																fill="none"
+																stroke="currentColor"
+																strokeWidth="3"
+																opacity="0.25"
+															/>
+															<path
+																d="M12 2 A 10 10 0 0 1 22 12"
+																fill="none"
+																stroke="currentColor"
+																strokeWidth="3"
+																strokeLinecap="round"
+															/>
+														</svg>
+														)
+													</>
+												) : (
+													` (${ outdatedPluginsCount })`
+												) }
 											</label>
 										</div>
 									</div>
