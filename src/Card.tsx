@@ -19,6 +19,7 @@ export const Card = ( props: any ) => {
 		showRequiresPHP,
 		showTestedUpTo,
 		showVersion,
+		currentWPVersion,
 	} = props;
 
 	const pluginLink = `https://wordpress.org/plugins/${ plugin.slug }`;
@@ -30,7 +31,7 @@ export const Card = ( props: any ) => {
 	};
 
 	return (
-		<div className="col-sm-12 col-md-4 col-lg-4 col-xl-4 col-xxl-3 px-2 py-3">
+		<div className="col-sm-12 col-md-4 col-lg-4 col-xl-4 col-xxl-2 px-2 py-3">
 			<div className="card h-100">
 				<a href={ pluginLink } target="_blank">
 					<img
@@ -78,6 +79,7 @@ export const Card = ( props: any ) => {
 							<TestedUpTo
 								showTestedUpTo={ showTestedUpTo }
 								plugin={ plugin }
+								currentWPVersion={ currentWPVersion }
 							/>
 							<Version
 								showVersion={ showVersion }

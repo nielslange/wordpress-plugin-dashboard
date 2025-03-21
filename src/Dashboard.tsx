@@ -12,6 +12,11 @@ interface Plugin {
 	tested: string;
 	version: string;
 	slug: string;
+	short_description: string;
+	banners: {
+		low: string;
+		high: string;
+	};
 }
 
 export const Dashboard = () => {
@@ -25,6 +30,30 @@ export const Dashboard = () => {
 		requiresAtLeast: 'requires',
 		requiresPHP: 'requires_php',
 		version: 'version',
+		wpCompatibility: 'tested', // New sort key for WordPress compatibility
+	};
+
+	// Helper function to normalize version strings by removing potential beta/RC suffixes
+	const normalizeVersionString = ( version: string ): string => {
+		// Remove any suffix like -beta1, -RC2, etc.
+		return version.replace( /-.*$/, '' );
+	};
+
+	// Version comparison function
+	const compareVersions = ( v1: string, v2: string ): number => {
+		const v1Parts = v1.split( '.' ).map( Number );
+		const v2Parts = v2.split( '.' ).map( Number );
+
+		for ( let i = 0; i < Math.max( v1Parts.length, v2Parts.length ); i++ ) {
+			const v1Part = v1Parts[ i ] || 0;
+			const v2Part = v2Parts[ i ] || 0;
+
+			if ( v1Part !== v2Part ) {
+				return v1Part - v2Part;
+			}
+		}
+
+		return 0;
 	};
 
 	// Helper function to get value from URL parameters or localStorage
@@ -82,6 +111,7 @@ export const Dashboard = () => {
 	const [ installs, setInstalls ] = useState( 0 );
 	const [ loading, setLoading ] = useState( true );
 	const [ error, setError ] = useState( null );
+	const [ currentWPVersion, setCurrentWPVersion ] = useState( '' );
 
 	const [ searchField, setSearchField ] = useState( () =>
 		getInitialValue( 'searchField', 'SMNTCS' )
@@ -93,6 +123,10 @@ export const Dashboard = () => {
 
 	const [ sortOrder, setSortOrder ] = useState( () =>
 		getInitialValue( 'sortOrder', 'desc' )
+	);
+
+	const [ showIncompatiblePlugins, setShowIncompatiblePlugins ] = useState(
+		() => getInitialBoolValue( 'showIncompatiblePlugins', false )
 	);
 
 	const [ showDescription, setShowDescription ] = useState( () =>
@@ -168,6 +202,39 @@ export const Dashboard = () => {
 			let result = 0;
 			const fieldName = sortKeyMap[ field ] || field;
 
+			// Handle the new sorting option for WordPress compatibility
+			if ( field === 'wpCompatibility' && currentWPVersion ) {
+				const aTestedVersion = normalizeVersionString( a.tested );
+				const bTestedVersion = normalizeVersionString( b.tested );
+				const wpVersion = normalizeVersionString( currentWPVersion );
+
+				const aCompatible =
+					compareVersions( aTestedVersion, wpVersion ) >= 0;
+				const bCompatible =
+					compareVersions( bTestedVersion, wpVersion ) >= 0;
+
+				// If sorting ascending, incompatible plugins come first
+				// If sorting descending, compatible plugins come first
+				if ( aCompatible !== bCompatible ) {
+					return sortOrder === 'asc'
+						? aCompatible
+							? 1
+							: -1
+						: aCompatible
+						? -1
+						: 1;
+				}
+
+				// If both are compatible or both incompatible, sort by version gap
+				const aGap = Math.abs(
+					compareVersions( aTestedVersion, wpVersion )
+				);
+				const bGap = Math.abs(
+					compareVersions( bTestedVersion, wpVersion )
+				);
+				return sortOrder === 'asc' ? aGap - bGap : bGap - aGap;
+			}
+
 			if ( field === 'pluginName' || field === 'version' ) {
 				result = a[ fieldName ].localeCompare( b[ fieldName ] );
 			} else {
@@ -177,6 +244,37 @@ export const Dashboard = () => {
 			return sortOrder === 'desc' ? -result : result;
 		};
 	};
+
+	// Function to fetch current WordPress version
+	const fetchCurrentWordPressVersion = async () => {
+		try {
+			const response = await fetch(
+				'https://api.wordpress.org/core/version-check/1.7/'
+			);
+			if ( ! response.ok ) {
+				throw new Error(
+					`HTTP error: The status is ${ response.status }`
+				);
+			}
+			const data = await response.json();
+
+			// Current stable version is in the first offer
+			return data.offers[ 0 ].current;
+		} catch ( error ) {
+			console.error( 'Error fetching WordPress version:', error );
+			return '';
+		}
+	};
+
+	// Fetch WordPress version on component mount
+	useEffect( () => {
+		const getWordPressVersion = async () => {
+			const version = await fetchCurrentWordPressVersion();
+			setCurrentWPVersion( version );
+		};
+
+		getWordPressVersion();
+	}, [] );
 
 	let url = new URL( 'https://api.wordpress.org/plugins/info/1.2/' );
 	url.searchParams.append( 'action', 'query_plugins' );
@@ -197,7 +295,24 @@ export const Dashboard = () => {
 			} )
 			.then( ( data ) => {
 				plugins = data[ 'plugins' ];
-				const sortedPlugins = [ ...plugins ].sort(
+
+				// Filter plugins if showIncompatiblePlugins is active
+				let filteredPlugins = [ ...plugins ];
+				if ( showIncompatiblePlugins && currentWPVersion ) {
+					filteredPlugins = filteredPlugins.filter( ( plugin ) => {
+						const pluginTestedVersion = normalizeVersionString(
+							plugin.tested
+						);
+						const wpVersion =
+							normalizeVersionString( currentWPVersion );
+						return (
+							compareVersions( pluginTestedVersion, wpVersion ) <
+							0
+						);
+					} );
+				}
+
+				const sortedPlugins = [ ...filteredPlugins ].sort(
 					dynamicSort( sortField, sortOrder )
 				);
 
@@ -221,7 +336,13 @@ export const Dashboard = () => {
 			.finally( () => {
 				setLoading( false );
 			} );
-	}, [ searchField, sortField, sortOrder ] );
+	}, [
+		searchField,
+		sortField,
+		sortOrder,
+		showIncompatiblePlugins,
+		currentWPVersion,
+	] );
 
 	useEffect( () => {
 		if (
@@ -311,6 +432,12 @@ export const Dashboard = () => {
 		updateSetting( 'showDescription', currentSetting );
 	};
 
+	const toggleShowIncompatiblePlugins = () => {
+		const currentSetting = ! showIncompatiblePlugins;
+		setShowIncompatiblePlugins( currentSetting );
+		updateSetting( 'showIncompatiblePlugins', currentSetting );
+	};
+
 	console.log( { sortField } );
 
 	return (
@@ -397,6 +524,40 @@ export const Dashboard = () => {
 									</p>
 								</form>
 
+								{ currentWPVersion && (
+									<div className="mt-4 pt-3">
+										<div className="mb-2 small">
+											Current version:{ ' ' }
+											<span className="fw-bold">
+												{ currentWPVersion }
+											</span>
+										</div>
+
+										<div className="form-check form-switch">
+											<input
+												className="form-check-input"
+												type="checkbox"
+												id="showIncompatiblePlugins"
+												name="showIncompatiblePlugins"
+												checked={
+													showIncompatiblePlugins
+												}
+												onChange={
+													toggleShowIncompatiblePlugins
+												}
+											/>
+											<label
+												className="form-check-label"
+												htmlFor="showIncompatiblePlugins"
+											>
+												Show outdated plugins
+											</label>
+										</div>
+									</div>
+								) }
+
+								<br />
+
 								<div>
 									<label
 										htmlFor="sortField"
@@ -420,6 +581,7 @@ export const Dashboard = () => {
 											Description
 										</label>
 									</div>
+
 									<div className="form-check form-switch">
 										<input
 											className="form-check-input"
@@ -560,8 +722,9 @@ export const Dashboard = () => {
 							<div className="row m-0">
 								{ data.map( ( plugin: any ) => (
 									<Card
-										plugin={ plugin }
 										key={ plugin.slug }
+										plugin={ plugin }
+										showDescription={ showDescription }
 										showActiveInstalls={
 											showActiveInstalls
 										}
@@ -576,7 +739,7 @@ export const Dashboard = () => {
 										showRequiresPHP={ showRequiresPHP }
 										showTestedUpTo={ showTestedUpTo }
 										showVersion={ showVersion }
-										showDescription={ showDescription }
+										currentWPVersion={ currentWPVersion }
 									/>
 								) ) }
 							</div>
