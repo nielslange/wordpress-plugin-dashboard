@@ -494,12 +494,7 @@ export const Dashboard = () => {
 		const currentSetting = ! showIncompatiblePlugins;
 		setShowIncompatiblePlugins( currentSetting );
 		updateSetting( 'showIncompatiblePlugins', currentSetting );
-
-		// Don't reset outdatedCountCalculated flag when toggling the checkbox
-		// We already have the count calculated, so no need to show spinner again
 	};
-
-	console.log( { sortField } );
 
 	return (
 		<div className="container-fluid">
@@ -515,16 +510,19 @@ export const Dashboard = () => {
 						{ data && (
 							<>
 								<p className="lead">
-									The following { data.length } plugins have
-									been downloaded{ ' ' }
-									<strong>
+									The following{ ' ' }
+									<span className="fw-bold">
+										{ data.length }
+									</span>{ ' ' }
+									plugins have been downloaded{ ' ' }
+									<span className="fw-bold">
 										{ downloads.toLocaleString() }
-									</strong>{ ' ' }
+									</span>{ ' ' }
 									and installed{ ' ' }
-									<strong>
+									<span className="fw-bold">
 										{ installs.toLocaleString() }
-									</strong>{ ' ' }
-									times.
+									</span>{ ' ' }
+									times. 🎉
 								</p>
 
 								<form>
