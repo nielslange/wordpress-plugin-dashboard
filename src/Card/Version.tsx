@@ -1,10 +1,17 @@
+import { FontAwesomeIcon } from '../FontAwesome';
+import { faTag } from '@fortawesome/free-solid-svg-icons';
+
 const Version = ( props: any ) => {
 	const { plugin, showVersion } = props;
 	return (
 		<>
 			{ showVersion && (
 				<tr>
-					<td>Version</td>
+					<td>
+						<abbr title="Version">
+							<FontAwesomeIcon icon={ faTag } className="me-2" />
+						</abbr>
+					</td>
 					<td className="text-end">{ plugin.version }</td>
 				</tr>
 			) }

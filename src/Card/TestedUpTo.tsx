@@ -1,13 +1,13 @@
+import { FontAwesomeIcon } from '../FontAwesome';
+import { faFlask } from '@fortawesome/free-solid-svg-icons';
+
 const TestedUpTo = ( props: any ) => {
 	const { plugin, showTestedUpTo, currentWPVersion } = props;
 
-	// Helper function to normalize version strings by removing potential beta/RC suffixes
 	const normalizeVersionString = ( version: string ): string => {
-		// Remove any suffix like -beta1, -RC2, etc.
 		return version.replace( /-.*$/, '' );
 	};
 
-	// Version comparison function
 	const compareVersions = ( v1: string, v2: string ): number => {
 		const v1Parts = v1.split( '.' ).map( Number );
 		const v2Parts = v2.split( '.' ).map( Number );
@@ -35,7 +35,14 @@ const TestedUpTo = ( props: any ) => {
 		<>
 			{ showTestedUpTo && (
 				<tr>
-					<td>Tested up to</td>
+					<td>
+						<abbr title="Tested up to">
+							<FontAwesomeIcon
+								icon={ faFlask }
+								className="me-2"
+							/>
+						</abbr>
+					</td>
 					<td className="text-end">
 						{ currentWPVersion && (
 							<span

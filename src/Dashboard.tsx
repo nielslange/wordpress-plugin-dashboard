@@ -82,17 +82,8 @@ export const Dashboard = () => {
 		return 0;
 	};
 
-	// Helper function to get value from URL parameters or localStorage
+	// Helper function to get value from localStorage
 	const getInitialValue = ( key: string, defaultValue: string ): string => {
-		const params = new URLSearchParams( window.location.search );
-		const urlValue = params.get( key );
-
-		if ( urlValue !== null ) {
-			// Save to localStorage if it's in URL but not in localStorage
-			localStorage.setItem( key, urlValue );
-			return urlValue;
-		}
-
 		const storedValue = localStorage.getItem( key );
 		return storedValue !== null ? storedValue : defaultValue;
 	};
@@ -102,34 +93,14 @@ export const Dashboard = () => {
 		key: string,
 		defaultValue: boolean
 	): boolean => {
-		const params = new URLSearchParams( window.location.search );
-		const urlValue = params.get( key );
-
-		if ( urlValue !== null ) {
-			const boolValue = urlValue === 'true';
-			localStorage.setItem( key, boolValue.toString() );
-			return boolValue;
-		}
-
 		const storedValue = localStorage.getItem( key );
 		return storedValue !== null ? storedValue === 'true' : defaultValue;
 	};
 
-	// Helper function to update state, localStorage, and URL params
+	// Helper function to update state and localStorage
 	const updateSetting = ( key: string, value: string | boolean ) => {
 		const stringValue = value.toString();
-
-		// Update localStorage
 		localStorage.setItem( key, stringValue );
-
-		// Update URL params
-		const params = new URLSearchParams( window.location.search );
-		params.set( key, stringValue );
-		window.history.replaceState(
-			{},
-			'',
-			`${ window.location.pathname }?${ params }`
-		);
 	};
 
 	const [ data, setData ] = useState< Plugin[] | null >( null );
@@ -500,7 +471,7 @@ export const Dashboard = () => {
 		<div className="container-fluid">
 			<div className="row">
 				<div className="col-md-3 col-xl-3 col-xxl-2 col-12 m-0 p-0 sidebar">
-					<div className="p-4 vh-100 sticky-top">
+					<div className="p-4 vh-100">
 						<h3>WP Plugin Dashboard</h3>
 
 						{ loading && <p>Loading...</p> }
